@@ -16,7 +16,7 @@ class TimeSeries(BaseModel):
     def to_dataframe(self):
         return pd.DataFrame(
             [
-                {"point_timestamp": row.point_timestamp, "point_value": row.point_value}
+                {'ds': row.point_timestamp, "y": row.point_value}
                 for row in self.Data
             ]
         )

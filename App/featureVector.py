@@ -9,6 +9,7 @@ import statsmodels.api as sm
 
 def featureVector(json):
     df = pd.read_json(json)
+    df.columns= ['point_timestamp', 'point_value']
     df['point_timestamp'] = pd.to_datetime(df['point_timestamp'])
     df['point_value'] = pd.to_numeric(df['point_value'])
 
