@@ -7,12 +7,14 @@ import requests
 
 pio.templates.default = "plotly"
 
-st.set_page_config(page_title="Anomalies Plot ", page_icon="📊",layout="wide")
+st.set_page_config(page_title="Anomalies Plot ", page_icon="📊", layout="wide")
+
 
 def validFormat(dataframe):
     if len(dataframe.columns) != 2:
         return False
     return True
+
 
 def fileUploader():
     uploaded_file = st.file_uploader("Upload your time series file", type=["csv"])
@@ -26,8 +28,9 @@ def fileUploader():
 
     return None
 
+
 def plot_anomalies(json):
-    if len(json)>2:
+    if len(json) > 2:
         forecastability_score = json["forecastability_score"]
         number_of_batch_fits = json["number_of_batch_fits"]
         mape = json["mape"]
@@ -48,23 +51,30 @@ def plot_anomalies(json):
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
         fig.add_trace(
             go.Scatter(x=dates, y=test, mode="markers+lines", name="Actual"),
-            row=1, col=1
+            row=1,
+            col=1,
         )
         fig.add_trace(
             go.Scatter(x=dates, y=predicted, mode="markers+lines", name="Predicted"),
-            row=1, col=1
+            row=1,
+            col=1,
         )
         fig.add_trace(
-            go.Scatter(x=dates, y=[predicted[i] if is_anomaly[i] else None for i in range(len(test))], mode="markers",name="Anomalies"),
-            row=1, col=1
+            go.Scatter(
+                x=dates,
+                y=[predicted[i] if is_anomaly[i] else None for i in range(len(test))],
+                mode="markers",
+                name="Anomalies",
+            ),
+            row=1,
+            col=1,
         )
-
 
         fig.update_layout(
             title="Anomalies Plot",
             xaxis_title="Date",
             yaxis_title="Value",
-            showlegend=True
+            showlegend=True,
         )
         st.plotly_chart(fig)
         st.write("Forecastability Score: ", forecastability_score)
@@ -77,7 +87,6 @@ def plot_anomalies(json):
         st.write("Forecastability Score: ", json["forecastability_score"])
 
 
-
 def main():
     st.title("Anomalies Plot")
     st.write("This page plots the anomalies in the time series data")
@@ -88,37 +97,54 @@ def main():
         Data = file.to_dict(orient="records")
         data = {"Data": Data}
 
-        with st.form(key='anomalies_form'):
+        with st.form(key="anomalies_form"):
             fh = st.selectbox("Window size ", [1, 2, 3, 4, 5, 6, 7])
             frequency = st.selectbox(
                 "Frequency",
                 [
-                    "D", "B", "H", "T", "S",
-                    "L", "U", "N", "W", "M",
-                    "SM", "BM", "CBM", "MS", "SMS",
-                    "BMS", "CBMS", "Q", "BQ", "QS",
-                    "BQS", "A", "BA", "AS", "BAS"
+                    "D",
+                    "B",
+                    "H",
+                    "T",
+                    "S",
+                    "L",
+                    "U",
+                    "N",
+                    "W",
+                    "M",
+                    "SM",
+                    "BM",
+                    "CBM",
+                    "MS",
+                    "SMS",
+                    "BMS",
+                    "CBMS",
+                    "Q",
+                    "BQ",
+                    "QS",
+                    "BQS",
+                    "A",
+                    "BA",
+                    "AS",
+                    "BAS",
                 ],
             )
-            oos = st.number_input("Initial batch size ", min_value=1, value=120,max_value=len(Data))
+            oos = st.number_input(
+                "Initial batch size ", min_value=1, value=120, max_value=len(Data)
+            )
             oos = len(Data) - oos
-            submit_button = st.form_submit_button(label='Check for Anomalies')
+            submit_button = st.form_submit_button(label="Check for Anomalies")
 
             if submit_button:
-                params={
-                    "fh": fh,
-                    "frequency": frequency,
-                    "oos": oos
-                }
+                params = {"fh": fh, "frequency": frequency, "oos": oos}
 
                 with st.spinner(text="Detecting anomalies..."):
                     response = requests.post(
-                        url="http://127.0.0.1:8000/anomalies",
-                        json=data,
-                        params=params
+                        url="http://127.0.0.1:8000/anomalies", json=data, params=params
                     )
                 output = response.json()
                 plot_anomalies(output)
+
 
 if __name__ == "__main__":
     main()
