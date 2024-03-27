@@ -5,8 +5,8 @@ import pandas as pd
 
 
 class TimeSeriesRow(BaseModel):
-    point_timestamp: str
-    point_value: float
+    ds : str
+    y : float
 
 
 class TimeSeries(BaseModel):
@@ -16,13 +16,8 @@ class TimeSeries(BaseModel):
     def to_dataframe(self):
         return pd.DataFrame(
             [
-                {'ds': row.point_timestamp, "y": row.point_value}
+                {"ds": row.ds, "y": row.y}
                 for row in self.Data
             ]
         )
 
-
-class Request(BaseModel):
-    Date_from: str
-    Data_to: str
-    Frequency: str

@@ -14,14 +14,19 @@ def hasAnomoly(y, yUpper, yLower):
     return "no"
 
 
-def anomolyDetector(df, threshold, oos=120, fh=1, frequency="D"):
+def anomolyDetector(df, oos=120, fh=1, frequency="D"):
     # df - dataframe, window_size - size of the window, threshold - threshold value, oos - out of sample data, fh - forecast horizon
     #prophet compatibility
     df.columns = ["ds", "y"]
     df["ds"] = pd.to_datetime(df["ds"])
     df["ds"] = df["ds"].dt.strftime("%Y-%m-%d")
 
-    fv = list(featureVector(df.to_json()).values())
+    with open("/home/codit/PycharmProjects/DataGenie-Hackathon/threshold.json") as f:
+        data = json.load(f)
+    threshold = float(data["threshold"])
+
+    dfForFv = df.copy()
+    fv = list(featureVector(dfForFv).values())
     fs = fscr(fv)
 
     oos = max(
@@ -78,7 +83,7 @@ def anomolyDetector(df, threshold, oos=120, fh=1, frequency="D"):
             "forecastability_score": fs,
             "anomaly_detection_done": "No"
         }
-
+"""
 f=open("Electric_Production_output.json","w+")
 output=anomolyDetector(pd.read_csv("/home/codit/PycharmProjects/DataGenie-Hackathon/App/Electric_Production.csv"), threshold=5,fh=4 , frequency="MS")
 json.dump(output,f)
@@ -86,3 +91,4 @@ json.dump(output,f)
 f=open("monthly_csv_output.json","w+")
 output=anomolyDetector(pd.read_csv("/home/codit/PycharmProjects/DataGenie-Hackathon/App/monthly_csv.csv"), threshold=5,fh=4 , frequency="MS")
 json.dump(output,f)
+"""

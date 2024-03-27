@@ -10,16 +10,18 @@ from featureVector import featureVector
 from anomolyDetection import anomolyDetector
 
 
-
 @app.post("/featureVector")
 async def feature_vector(data: TimeSeries):
-    fv = featureVector(data.Data)
+    df = data.to_dataframe()
+    fv = featureVector(df)
     return fv
 
 
 @app.post("/forecastabilityScore")
 async def forecastability_score(data: TimeSeries):
-    fs = forcastability_score_cosine_with_rep(data.Data)
+    df=data.to_dataframe()
+    fv=list(featureVector(df).values())
+    fs = forcastability_score_cosine_with_rep(fv)
     return fs
 
 
@@ -38,12 +40,7 @@ async def anomalies(
         oos: Optional[int] = 120,
 ):
     df = data.to_dataframe()
-    with open("/home/codit/PycharmProjects/DataGenie-Hackathon/threshold.json") as f:
-        data = json.load(f)
-    thrsh = float(data["threshold"])
     output = anomolyDetector(
-        df, threshold=thrsh, fh=fh, frequency=frequency, oos=oos
+        df, fh=fh, frequency=frequency, oos=oos
     )
     return output
-
-
