@@ -46,7 +46,7 @@ def plot_anomalies(json):
             test.append(result["point_value"])
             predicted.append(result["predicted"])
             is_anomaly.append(result["is_anomaly"])
-            if result["is_anomaly"]:
+            if result["is_anomaly"]=="yes":
                 anomalies += 1
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
         fig.add_trace(
@@ -62,7 +62,7 @@ def plot_anomalies(json):
         fig.add_trace(
             go.Scatter(
                 x=dates,
-                y=[predicted[i] if is_anomaly[i] else None for i in range(len(test))],
+                y=[predicted[i] if is_anomaly[i] == "yes" else None for i in range(len(test))],
                 mode="markers",
                 name="Anomalies",
             ),

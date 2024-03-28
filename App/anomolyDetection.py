@@ -14,7 +14,7 @@ def hasAnomoly(y, yUpper, yLower):
     return "no"
 
 
-def anomolyDetector(df, oos=120, fh=1, frequency="D"):
+def anomolyDetector(df, oos=120, fh=1, frequency="D",params=None):
     # df - dataframe, window_size - size of the window, threshold - threshold value, oos - out of sample data, fh - forecast horizon
     #prophet compatibility
     df.columns = ["ds", "y"]
@@ -43,7 +43,7 @@ def anomolyDetector(df, oos=120, fh=1, frequency="D"):
         count = 0
         for i in range(-oos, 0, fh):
             start = time.time()
-            model = Prophet()
+            model = Prophet(**params)
             model.fit(df[:i])
             # assuming that the window size mentioned is for fh since window size is incremental in expanding window
             if i+fh<=0:

@@ -25,13 +25,21 @@ Challenges Faced :
  - Added API endpoints namely :
       - POST /featureVector : Returns the feature vector of the given time series data when given the TimeSeries object.
       - POST /forecastabilityScore : Returns the forecastability score of the given time series data when given the TimeSeries object.
-      - POST /anomalies?oos={}&forecast_horizon={}&frequency={} : Returns the forecasted values, MAPE, average time taken per batch for the given time series data and the anomalous points, when given the TimeSeries object.
+      - POST /anomalies?oos={}&fh={}&frequency={} : Returns the forecasted values, MAPE, average time taken per batch for the given time series data and the anomalous points, when given the TimeSeries object.
       - GET /threshold : Returns the threshold value for the forecastability score.
  - Tested the API endpoints using Swagger UI.
 
+### Checkpoint 4 - Partial :
+ - Used hyperopt to tune the hyperparameters changepoint_prior_scale,seasonality_prior_scale,seasonality_mode of the Prophet model by the Tree of Parzen Estimators (TPE) algorithm.
+ - Results for the same time series :
+ - Before tuning with default parameters
+   - MAPE =  0.028392128288994605
+ - After tuning with hyperopt (3 iterations)
+   - MAPE =  0.02245232357907368
+
 Overall view :
 - Checkpoint 1
-![img.png](img.png)
+![img_2.png](img_2.png)
 
 - Checkpoint 2 & 3
 ![img_1.png](img_1.png)
